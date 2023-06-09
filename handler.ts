@@ -1,20 +1,19 @@
-import * as AWS from "aws-sdk";
-import {APIGatewayProxyEventV2, APIGatewayProxyHandlerV2} from "aws-lambda";
+// import * as AWS from "aws-sdk";
+import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import * as storage from './storage';
 import * as s from "./status";
-import {Post} from "./model";
-import {ResultStatus} from "./status";
-import {remove} from "./storage";
+import { Post } from "./model";
+import { ResultStatus } from "./status";
 
 export const createPost: APIGatewayProxyHandlerV2<ResultStatus> = async (event: APIGatewayProxyEventV2) => {
-    if(!event.body) {
+    if (!event.body) {
         return s.notFoundError();
     }
 
     const { title, content } = JSON.parse(event.body);
 
 
-    if(!(await storage.insert({ title, content }))) {
+    if (!(await storage.insert({ title, content }))) {
         return s.notFoundError();
     }
 
@@ -22,13 +21,13 @@ export const createPost: APIGatewayProxyHandlerV2<ResultStatus> = async (event: 
 }
 
 export const readPost: APIGatewayProxyHandlerV2<ResultStatus> = async (event: APIGatewayProxyEventV2) => {
-    if(!event.pathParameters || !event.pathParameters['title']) {
+    if (!event.pathParameters || !event.pathParameters['title']) {
         return s.notFoundError();
     }
 
     const post: Post | null = await storage.select(event.pathParameters.title);
 
-    if(!(post)) {
+    if (!(post)) {
         return s.notFoundError();
     }
 
@@ -36,7 +35,7 @@ export const readPost: APIGatewayProxyHandlerV2<ResultStatus> = async (event: AP
 }
 
 export const updatePost: APIGatewayProxyHandlerV2<ResultStatus> = async (event: APIGatewayProxyEventV2) => {
-    if(!event.body || !event.pathParameters || !event.pathParameters['title']) {
+    if (!event.body || !event.pathParameters || !event.pathParameters['title']) {
         return s.notFoundError();
     }
 
@@ -44,22 +43,25 @@ export const updatePost: APIGatewayProxyHandlerV2<ResultStatus> = async (event: 
 
     const { title, content } = JSON.parse(event.body);
 
-    if(!(await storage.update(oldTitle, { title, content }))) {
+    if (!(await storage.update(oldTitle, { title, content }))) {
         return s.notFoundError();
     }
 
     return s.dataSuccess({ title }, 200);
 }
 
-export const listPost: APIGatewayProxyHandlerV2<ResultStatus> = async (event: APIGatewayProxyEventV2) => {
+export const listPost: APIGatewayProxyHandlerV2<ResultStatus> = async () => {
+    const posts: Post[] = await storage.list();
 
-    const posts: Post[] = storage.list();
+    console.log('ctemp');
 
-    return s.dataSuccess({ posts }, 200);
+    // return s.dataSuccess({ posts });
+
+    return s.dataSuccess({ posts });
 }
 
 export const deletePost: APIGatewayProxyHandlerV2<ResultStatus> = async (event: APIGatewayProxyEventV2) => {
-    if(!event.pathParameters || !event.pathParameters['title']) {
+    if (!event.pathParameters || !event.pathParameters['title']) {
         return s.notFoundError();
     }
 

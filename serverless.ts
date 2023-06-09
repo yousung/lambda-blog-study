@@ -38,11 +38,6 @@ const config: AWS = {
         name: "aws",
         runtime: "nodejs18.x",
         region: "ap-northeast-2",
-        environment: {
-            BUCKET_NAME: process.env.BUCKET_NAME!,
-            ROOT_DOMAIN: process.env.ROOT_DOMAIN!,
-            SUB_DOMAIN: process.env.SUB_DOMAIN!,
-        },
         iam: {
             role: {
                 statements: [
@@ -58,7 +53,19 @@ const config: AWS = {
         },
     },
     functions,
-    plugins: ["serverless-plugin-scripts", "serverless-webpack"],
+    plugins: [
+        "serverless-webpack",
+        "serverless-offline",
+        "serverless-offline-watcher"
+    ],
+    custom: {
+        "serverless-offline-watcher": [
+            {
+                path: "./*.ts",
+                command: "echo 'handle.ts was modified!'",
+            }
+        ]
+    },
     resources: {
         Resources: {
             PostTable

@@ -1,22 +1,22 @@
-export const notFoundError = (statusCode: number = 404) :{statusCode: number}  => {
+export const notFoundError = (statusCode = 404): { statusCode: number } => {
     return {
         statusCode,
     }
 };
 
-export const dataSuccess = (data: any, statusCode: number = 200) :{data: any, statusCode: number}  => {
+export const dataSuccess = (data: any, statusCode = 200): { body: any, statusCode: number } => {
     return {
-        data,
+        body: JSON.stringify(data),
         statusCode,
     }
 };
-export const success = (statusCode: number = 200) :{statusCode: number}  => {
+export const success = (statusCode = 200): { statusCode: number } => {
     return {
         statusCode,
     }
 };
 
 export interface ResultStatus {
-    data?: any;
+    body?: any;
     statusCode: number;
 }
